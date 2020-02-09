@@ -1,0 +1,187 @@
+swagger: '2.0'
+info:
+  description: |
+    This is a sample Petstore server.  You can find 
+    out more about Swagger at 
+    [http://swagger.io](http://swagger.io) or on 
+    [irc.freenode.net, #swagger](http://swagger.io/irc/).
+  version: 1.0.0
+  title: ClaimsPay
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+# host: petstore.swagger.io
+# basePath: /v2
+tags:
+- name: account
+  description: Uniquely identify claim parties and securely store payment methods for future use.
+  externalDocs:
+    description: Learn more
+    url: http://devex.oneinc.io/cp/qs/account
+- name: approvalRequest
+  description: Pay claimants and vendors in single-party scenarios, collect party approvals and disburse funds in multi-party scenarios.
+  externalDocs: 
+    description: Learn more
+    url: http://devex.oneinc.io/cp/qs/approvalrequest
+# schemes:
+# - http
+paths:
+  /create:
+    post:
+      tags:
+      - account
+      summary: Create a claim payment participant. All payees and approvers should have a unique account.
+      operationId: createAccount
+      consumes:
+      - application/json
+      - application/xml
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - in: body
+        name: body
+        description: Information about the claim payment participant. One of CompanyDetails or IndividualDetails is required.
+        required: true
+        schema:
+          $ref: '#/definitions/Account'
+      responses:
+        400:
+          description: Invalid auth key
+        405:
+          description: Invalid input
+        500:
+          description: System down
+      security:
+      - petstore_auth:
+        - write:pets
+        - read:pets
+        
+securityDefinitions:
+  petstore_auth:
+    type: oauth2
+    authorizationUrl: http://petstore.swagger.io/oauth/dialog
+    flow: implicit
+    scopes:
+      write:pets: modify pets in your account
+      read:pets: read your pets
+  api_key:
+    type: apiKey
+    name: api_key
+    in: header
+
+definitions:
+  Account:
+    type: object
+    properties:
+      CompanyDetails:
+        $ref: '#/components/CompanyDetails'
+      IndividualDetails:
+        $ref: '#/components/IndividualDetails'
+      ClaimNumber:
+        type: string
+      ClaimsPayAuthenticationKey:
+        type: string
+    required:
+      - ClaimsPayAuthenticationKey
+        
+components:
+  CompanyDetails:
+    type: object
+    properties:
+      CompanyName:
+        type: string
+        description: The name of the company entity.
+      TaxId:
+        type: string
+        minLength: 9
+        maxLength: 9
+        description: The tax ID for the company entity. As unique identifier can be used to present saved payment methods for company entity on the epay webpage.
+      Address:
+        type: string
+        description: The physical street address for the company.
+      City:
+        type: string
+        description: The city for the company.
+      State:
+        type: string
+        description: The state for the company.
+      Zip:
+        type: string
+        minLength: 5
+        maxLength: 5
+        description: The zip code for the company.
+      ContactDetails:
+        $ref: "#/components/ContactDetails"
+    required:
+      - TaxId
+  
+  CompanyType:
+    type: number
+    values:
+      
+        
+  ContactDetails:
+    type: object
+    properties:
+      ContactId:
+        type: integer
+        description: The contactId that is stored in the ClaimsPay system for the company contact. If this value is provided, the system will update the stored information. If the value is not provided the system will create a new account.
+      FirstName:
+        type: string
+        description: The first name of the company contact to whom the payment method will be associated.
+      LastName:
+        type: string
+        description: The last name of the company contact to whom the payment method will be associated.
+      Email:
+        type: string
+        description: The email address for the company contact; will pre-populate ePay email Address if available.
+      PhoneNumber:
+        type: string
+        description: The phone number for the company contact.
+      WebAccess:
+        type: number
+        description: Value that will indicate if the contact will have access to the company website. If property is not provided, default value is enable.
+        
+  IndividualDetails:
+    type: object
+    properties:
+      FirstName:
+        type: string
+        description: The first name of the Payee to whom the payment method will be associated.
+      LastName:
+        type: string
+        description: The last name of the Payee to whom the payment method will be associated.
+      Email:
+        type: string
+        description:  The Payee’s email address; will pre-populate ePay email Address if available.
+      Address:
+        type: string
+        description: The street address for the individual payee.
+      City:
+        type: string
+        description:  The city for the individual payee.
+      State:
+        type: string
+        description: The state for the individual payee.
+      Zip:
+        type: string
+        description: The zip code for the individual payee.
+      PhoneNumber:
+        type: string
+        description: The Payee's phone number.
+
+
+        
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+# Added by API Auto Mocking Plugin
+host: virtserver.swaggerhub.com
+basePath: /oneincmax/cp-test/1.0.0
+schemes:
+ - https
+ - http
