@@ -1,0 +1,108 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "This is a sample Petstore server.  You can find \nout more about Swagger at \n[http://swagger.io](http://swagger.io) or on \n[irc.freenode.net, #swagger](http://swagger.io/irc/).\n",
+    "version" : "1.0.0",
+    "title" : "ClaimsPay",
+    "termsOfService" : "http://swagger.io/terms/",
+    "contact" : {
+      "email" : "apiteam@swagger.io"
+    },
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host" : "virtserver.swaggerhub.com",
+  "basePath" : "/oneincmax/cp-test/1.0.0",
+  "tags" : [ {
+    "name" : "account",
+    "description" : "Uniquely identify claim parties and securely store payment methods for future use.",
+    "externalDocs" : {
+      "description" : "Learn more",
+      "url" : "http://devex.oneinc.io/cp/qs/account"
+    }
+  }, {
+    "name" : "approvalRequest",
+    "description" : "Pay claimants and vendors in single-party scenarios, collect party approvals and disburse funds in multi-party scenarios.",
+    "externalDocs" : {
+      "description" : "Learn more",
+      "url" : "http://devex.oneinc.io/cp/qs/approvalrequest"
+    }
+  } ],
+  "schemes" : [ "https", "http" ],
+  "paths" : {
+    "/create" : {
+      "post" : {
+        "tags" : [ "account" ],
+        "summary" : "Create a claim payment participant. All payees and approvers should have a unique account.",
+        "operationId" : "createAccount",
+        "consumes" : [ "application/json", "application/xml" ],
+        "produces" : [ "application/json", "application/xml" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "description" : "Information about the claim payment participant. One of CompanyDetails or IndividualDetails is required.",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/Account"
+          }
+        } ],
+        "responses" : {
+          "400" : {
+            "description" : "Invalid auth key"
+          },
+          "405" : {
+            "description" : "Invalid input"
+          },
+          "500" : {
+            "description" : "System down"
+          }
+        },
+        "security" : [ {
+          "petstore_auth" : [ "write:pets", "read:pets" ]
+        } ]
+      }
+    }
+  },
+  "securityDefinitions" : {
+    "petstore_auth" : {
+      "type" : "oauth2",
+      "authorizationUrl" : "http://petstore.swagger.io/oauth/dialog",
+      "flow" : "implicit",
+      "scopes" : {
+        "write:pets" : "modify pets in your account",
+        "read:pets" : "read your pets"
+      }
+    },
+    "api_key" : {
+      "type" : "apiKey",
+      "name" : "api_key",
+      "in" : "header"
+    }
+  },
+  "definitions" : {
+    "Account" : {
+      "type" : "object",
+      "required" : [ "ClaimsPayAuthenticationKey" ],
+      "properties" : {
+        "CompanyDetails" : {
+          "$ref" : "#/components/CompanyDetails"
+        },
+        "IndividualDetails" : {
+          "$ref" : "#/components/IndividualDetails"
+        },
+        "ClaimNumber" : {
+          "type" : "string"
+        },
+        "ClaimsPayAuthenticationKey" : {
+          "type" : "string"
+        }
+      }
+    }
+  },
+  "externalDocs" : {
+    "description" : "Find out more about Swagger",
+    "url" : "http://swagger.io"
+  }
+}
